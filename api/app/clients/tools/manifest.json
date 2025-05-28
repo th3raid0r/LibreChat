@@ -124,6 +124,19 @@
     ]
   },
   {
+    "name": "Kagi Search",
+    "pluginKey": "kagi_search",
+    "description": "Search the web using Kagi Search API. Provides high-quality, ad-free search results with privacy protection.",
+    "icon": "https://kagi.com/favicon.ico",
+    "authConfig": [
+      {
+        "authField": "KAGI_API_KEY",
+        "label": "Kagi API Key",
+        "description": "Get your API key from <a href=\"https://kagi.com/settings?p=api\" target=\"_blank\">Kagi API Portal</a>"
+      }
+    ]
+  },
+  {
     "name": "Calculator",
     "pluginKey": "calculator",
     "description": "Perform simple and complex mathematical calculations.",

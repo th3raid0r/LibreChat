@@ -13,6 +13,7 @@ export function loadWebSearchConfig(
   config: TCustomConfig['webSearch'],
 ): TCustomConfig['webSearch'] {
   const serperApiKey = config?.serperApiKey ?? '${SERPER_API_KEY}';
+  const kagiApiKey = config?.kagiApiKey ?? '${KAGI_API_KEY}';
   const firecrawlApiKey = config?.firecrawlApiKey ?? '${FIRECRAWL_API_KEY}';
   const firecrawlApiUrl = config?.firecrawlApiUrl ?? '${FIRECRAWL_API_URL}';
   const jinaApiKey = config?.jinaApiKey ?? '${JINA_API_KEY}';
@@ -25,6 +26,7 @@ export function loadWebSearchConfig(
     jinaApiKey,
     cohereApiKey,
     serperApiKey,
+    kagiApiKey,
     firecrawlApiKey,
     firecrawlApiUrl,
   };
@@ -32,6 +34,7 @@ export function loadWebSearchConfig(
 
 export type TWebSearchKeys =
   | 'serperApiKey'
+  | 'kagiApiKey'
   | 'firecrawlApiKey'
   | 'firecrawlApiUrl'
   | 'jinaApiKey'
@@ -46,6 +49,9 @@ export const webSearchAuth = {
   providers: {
     serper: {
       serperApiKey: 1 as const,
+    },
+    kagi: {
+      kagiApiKey: 1 as const,
     },
   },
   scrapers: {

@@ -76,6 +76,30 @@ describe('checkWebSearchConfig', () => {
       expect(logger.warn).not.toHaveBeenCalled();
     });
 
+    it('should log debug message for Kagi with Jina pairing', () => {
+      const config = {
+        kagiApiKey: '${KAGI_API_KEY}',
+        jinaApiKey: '${JINA_API_KEY}',
+      };
+
+      extractVariableName.mockReturnValueOnce('KAGI_API_KEY').mockReturnValueOnce('JINA_API_KEY');
+
+      process.env.KAGI_API_KEY = 'test-kagi-key';
+      process.env.JINA_API_KEY = 'test-jina-key';
+
+      checkWebSearchConfig(config);
+
+      expect(extractVariableName).toHaveBeenCalledWith('${KAGI_API_KEY}');
+      expect(extractVariableName).toHaveBeenCalledWith('${JINA_API_KEY}');
+      expect(logger.debug).toHaveBeenCalledWith(
+        'Web search kagiApiKey: Using environment variable KAGI_API_KEY with value set',
+      );
+      expect(logger.debug).toHaveBeenCalledWith(
+        'Web search jinaApiKey: Using environment variable JINA_API_KEY with value set',
+      );
+      expect(logger.warn).not.toHaveBeenCalled();
+    });
+
     it('should log debug message for environment variables not set in environment', () => {
       const config = {
         cohereApiKey: '${COHERE_API_KEY}',
@@ -132,6 +156,35 @@ describe('checkWebSearchConfig', () => {
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining('Current value: "https://ap..."'),
       );
+    });
+
+    it('should warn when Kagi + Jina pairing contains actual API keys', () => {
+      const config = {
+        kagiApiKey: 'kagi-1234567890abcdef',
+        jinaApiKey: 'jina-9876543210fedcba',
+      };
+
+      extractVariableName.mockReturnValue(null);
+
+      checkWebSearchConfig(config);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '❗ Web search configuration error: kagiApiKey contains an actual value',
+        ),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Current value: "kagi-12345..."'),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '❗ Web search configuration error: jinaApiKey contains an actual value',
+        ),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Current value: "jina-98765..."'),
+      );
+      expect(logger.debug).not.toHaveBeenCalled();
     });
 
     it('should include documentation link in warning message', () => {

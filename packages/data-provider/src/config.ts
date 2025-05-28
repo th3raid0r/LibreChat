@@ -594,6 +594,7 @@ export enum SearchCategories {
 export enum SearchProviders {
   SERPER = 'serper',
   SEARXNG = 'searxng',
+  KAGI = 'kagi',
 }
 
 export enum ScraperTypes {
@@ -614,6 +615,7 @@ export enum SafeSearchTypes {
 
 export const webSearchSchema = z.object({
   serperApiKey: z.string().optional().default('${SERPER_API_KEY}'),
+  kagiApiKey: z.string().optional().default('${KAGI_API_KEY}'),
   firecrawlApiKey: z.string().optional().default('${FIRECRAWL_API_KEY}'),
   firecrawlApiUrl: z.string().optional().default('${FIRECRAWL_API_URL}'),
   jinaApiKey: z.string().optional().default('${JINA_API_KEY}'),
