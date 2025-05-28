@@ -623,6 +623,8 @@ describe('web.ts', () => {
       // Check providers
       expect(webSearchAuth.providers).toHaveProperty('serper');
       expect(webSearchAuth.providers.serper).toHaveProperty('serperApiKey', 1);
+      expect(webSearchAuth.providers).toHaveProperty('kagi');
+      expect(webSearchAuth.providers.kagi).toHaveProperty('kagiApiKey', 1);
 
       // Check scrapers
       expect(webSearchAuth.scrapers).toHaveProperty('firecrawl');
@@ -639,6 +641,7 @@ describe('web.ts', () => {
     it('should mark required keys with value 1', () => {
       // All keys with value 1 are required
       expect(webSearchAuth.providers.serper.serperApiKey).toBe(1);
+      expect(webSearchAuth.providers.kagi.kagiApiKey).toBe(1);
       expect(webSearchAuth.scrapers.firecrawl.firecrawlApiKey).toBe(1);
       expect(webSearchAuth.rerankers.jina.jinaApiKey).toBe(1);
       expect(webSearchAuth.rerankers.cohere.cohereApiKey).toBe(1);
@@ -898,6 +901,53 @@ describe('web.ts', () => {
       expect(result.authResult.searchProvider).toBeDefined();
       expect(result.authResult.scraperType).toBeDefined();
       expect(result.authResult.rerankerType).toBeDefined();
+    });
+
+    it('should work with Kagi + Jina pairing', async () => {
+      // Initialize a webSearchConfig with Kagi + Jina pairing
+      const webSearchConfig: TCustomConfig['webSearch'] = {
+        kagiApiKey: '${KAGI_API_KEY}',
+        firecrawlApiKey: '${FIRECRAWL_API_KEY}',
+        firecrawlApiUrl: '${FIRECRAWL_API_URL}',
+        jinaApiKey: '${JINA_API_KEY}',
+        safeSearch: SafeSearchTypes.MODERATE,
+        searchProvider: 'kagi' as SearchProviders,
+        scraperType: 'firecrawl' as ScraperTypes,
+        rerankerType: 'jina' as RerankerTypes,
+      };
+
+      // Mock successful authentication
+      mockLoadAuthValues.mockImplementation(({ authFields }) => {
+        const result: Record<string, string> = {};
+        authFields.forEach((field) => {
+          result[field] =
+            field === 'FIRECRAWL_API_URL' ? 'https://api.firecrawl.dev' : 'test-api-key';
+        });
+        return Promise.resolve(result);
+      });
+
+      const result = await loadWebSearchAuth({
+        userId,
+        webSearchConfig,
+        loadAuthValues: mockLoadAuthValues,
+      });
+
+      expect(result.authenticated).toBe(true);
+      expect(result.authResult.searchProvider).toBe('kagi');
+      expect(result.authResult.scraperType).toBe('firecrawl');
+      expect(result.authResult.rerankerType).toBe('jina');
+
+      // Verify that only KAGI_API_KEY was requested for the providers category
+      const providerCalls = mockLoadAuthValues.mock.calls.filter((call) =>
+        call[0].authFields.includes('KAGI_API_KEY'),
+      );
+      expect(providerCalls).toHaveLength(1);
+
+      // Verify that the correct API keys are in the auth result
+      expect(result.authResult).toHaveProperty('kagiApiKey', 'test-api-key');
+      expect(result.authResult).toHaveProperty('firecrawlApiKey', 'test-api-key');
+      expect(result.authResult).toHaveProperty('firecrawlApiUrl', 'https://api.firecrawl.dev');
+      expect(result.authResult).toHaveProperty('jinaApiKey', 'test-api-key');
     });
   });
 });

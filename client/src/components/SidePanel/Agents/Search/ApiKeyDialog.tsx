@@ -42,6 +42,10 @@ export default function ApiKeyDialog({
       : RerankerTypes.JINA,
   );
 
+  const [selectedProvider, setSelectedProvider] = useState<'serper' | 'kagi'>(
+    config?.webSearch?.searchProvider === 'kagi' ? 'kagi' : 'serper',
+  );
+
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
   const [scraperDropdownOpen, setScraperDropdownOpen] = useState(false);
   const [rerankerDropdownOpen, setRerankerDropdownOpen] = useState(false);
@@ -49,7 +53,11 @@ export default function ApiKeyDialog({
   const providerItems: MenuItemProps[] = [
     {
       label: localize('com_ui_web_search_provider_serper'),
-      onClick: () => {},
+      onClick: () => setSelectedProvider('serper'),
+    },
+    {
+      label: localize('com_ui_web_search_provider_kagi'),
+      onClick: () => setSelectedProvider('kagi'),
     },
   ];
 
@@ -210,35 +218,64 @@ export default function ApiKeyDialog({
                             onClick={() => setProviderDropdownOpen(!providerDropdownOpen)}
                             className="flex items-center rounded-md border border-border-light px-3 py-1 text-sm text-text-secondary"
                           >
-                            {localize('com_ui_web_search_provider_serper')}
+                            {selectedProvider === 'kagi' 
+                              ? localize('com_ui_web_search_provider_kagi')
+                              : localize('com_ui_web_search_provider_serper')}
                             <ChevronDown className="ml-1 h-4 w-4" />
                           </Menu.MenuButton>
                         }
                       />
                     ) : (
                       <div className="text-sm text-text-secondary">
-                        {localize('com_ui_web_search_provider_serper')}
+                        {config?.webSearch?.searchProvider === 'kagi' 
+                          ? localize('com_ui_web_search_provider_kagi')
+                          : localize('com_ui_web_search_provider_serper')}
                       </div>
                     )}
                   </div>
-                  <Input
-                    type="password"
-                    placeholder={`${localize('com_ui_enter_api_key')}`}
-                    autoComplete="one-time-code"
-                    readOnly={true}
-                    onFocus={(e) => (e.target.readOnly = false)}
-                    {...register('serperApiKey', { required: true })}
-                  />
-                  <div className="mt-1 text-xs text-text-secondary">
-                    <a
-                      href="https://serper.dev/api-key"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                    >
-                      {localize('com_ui_web_search_provider_serper_key')}
-                    </a>
-                  </div>
+                  {config?.webSearch?.searchProvider === 'kagi' || (!config?.webSearch?.searchProvider && selectedProvider === 'kagi') ? (
+                    <>
+                      <Input
+                        type="password"
+                        placeholder={`${localize('com_ui_enter_api_key')}`}
+                        autoComplete="one-time-code"
+                        readOnly={true}
+                        onFocus={(e) => (e.target.readOnly = false)}
+                        {...register('kagiApiKey', { required: true })}
+                      />
+                      <div className="mt-1 text-xs text-text-secondary">
+                        <a
+                          href="https://kagi.com/settings?p=api"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          {localize('com_ui_web_search_provider_kagi_key')}
+                        </a>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Input
+                        type="password"
+                        placeholder={`${localize('com_ui_enter_api_key')}`}
+                        autoComplete="one-time-code"
+                        readOnly={true}
+                        onFocus={(e) => (e.target.readOnly = false)}
+                        {...register('serperApiKey', { required: true })}
+                      />
+                      <div className="mt-1 text-xs text-text-secondary">
+                        <a
+                          href="https://serper.dev/api-key"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          {localize('com_ui_web_search_provider_serper_key')}
+                        </a>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

@@ -5,6 +5,7 @@ import { useUpdateUserPluginsMutation } from 'librechat-data-provider/react-quer
 
 export type SearchApiKeyFormData = {
   serperApiKey: string;
+  kagiApiKey: string;
   firecrawlApiKey: string;
   firecrawlApiUrl: string;
   jinaApiKey: string;
@@ -42,6 +43,7 @@ const useAuthSearchTool = (options?: { isEntityTool: boolean }) => {
     (data: SearchApiKeyFormData) => {
       const auth = Object.entries({
         serperApiKey: data.serperApiKey,
+        kagiApiKey: data.kagiApiKey,
         firecrawlApiKey: data.firecrawlApiKey,
         firecrawlApiUrl: data.firecrawlApiUrl,
         jinaApiKey: data.jinaApiKey,

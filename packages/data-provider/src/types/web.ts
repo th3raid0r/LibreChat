@@ -11,7 +11,7 @@ export enum DATE_RANGE {
   PAST_YEAR = 'y',
 }
 
-export type SearchProvider = 'serper' | 'searxng';
+export type SearchProvider = 'serper' | 'searxng' | 'kagi';
 export type RerankerType = 'infinity' | 'jina' | 'cohere' | 'none';
 
 export interface Highlight {
@@ -72,6 +72,7 @@ export interface Source {
 export interface SearchConfig {
   searchProvider?: SearchProvider;
   serperApiKey?: string;
+  kagiApiKey?: string;
   searxngInstanceUrl?: string;
   searxngApiKey?: string;
 }
@@ -153,6 +154,7 @@ export interface SearchToolConfig extends SearchConfig, ProcessSourcesConfig, Fi
   safeSearch?: SafeSearchLevel;
   jinaApiKey?: string;
   cohereApiKey?: string;
+  kagiApiKey?: string;
   rerankerType?: RerankerType;
   onSearchResults?: (results: SearchResult, runnableConfig?: RunnableConfig) => void;
   onGetHighlights?: (link: string) => void;

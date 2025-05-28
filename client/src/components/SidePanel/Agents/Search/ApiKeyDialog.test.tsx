@@ -47,6 +47,8 @@ describe('ApiKeyDialog', () => {
     expect(
       screen.getByRole('button', { name: 'com_ui_web_search_provider_serper' }),
     ).toBeInTheDocument();
+    // Should also show Kagi option in dropdown
+    expect(screen.getByText('com_ui_web_search_provider_kagi')).toBeInTheDocument();
     // Scraper dropdown button
     expect(
       screen.getByRole('button', { name: 'com_ui_web_search_scraper_firecrawl' }),
@@ -66,6 +68,14 @@ describe('ApiKeyDialog', () => {
     mockUseGetStartupConfig.mockReturnValue({ data: { webSearch: { searchProvider: 'serper' } } });
     render(<ApiKeyDialog {...defaultProps} />);
     expect(screen.getByText('com_ui_web_search_provider_serper')).toBeInTheDocument();
+    // Should not find a dropdown button for provider
+    expect(screen.queryByRole('button', { name: /provider/i })).not.toBeInTheDocument();
+  });
+
+  it('shows static text for Kagi provider when Kagi is set', () => {
+    mockUseGetStartupConfig.mockReturnValue({ data: { webSearch: { searchProvider: 'kagi' } } });
+    render(<ApiKeyDialog {...defaultProps} />);
+    expect(screen.getByText('com_ui_web_search_provider_kagi')).toBeInTheDocument();
     // Should not find a dropdown button for provider
     expect(screen.queryByRole('button', { name: /provider/i })).not.toBeInTheDocument();
   });
