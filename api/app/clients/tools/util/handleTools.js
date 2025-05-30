@@ -275,6 +275,11 @@ const loadTools = async ({
         loadAuthValues,
         webSearchConfig,
       });
+      logger.debug('[web_search] Authentication result:', {
+        authenticated: result.authenticated,
+        authResult: result.authResult,
+        authTypes: result.authTypes,
+      });
       const { onSearchResults, onGetHighlights } = options?.[Tools.web_search] ?? {};
       requestedTools[tool] = async () => {
         toolContextMap[tool] = `# \`${tool}\`:
