@@ -1,3 +1,4 @@
 [submodule "packages/agents"]
 	path = packages/agents
 	url = git@github.com:th3raid0r/librechat-agents.git
+	branch = feature/KagiSearch
